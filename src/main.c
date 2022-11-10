@@ -8,15 +8,29 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/drivers/uart.h>
+
+#if CONFIG_DEBUG_SWD == 1
+#include "stm32f4xx_ll_system.h"
+#endif
+
 #include "dw3000_hw.h"
+#include "dw3000_spi.h"
 #include "deca_probe_interface.h"
+
 BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart),
 	     "Console device is not ACM CDC UART device");
 
 void main(void)
 {
+
+	#if CONFIG_DEBUG_SWD == 1
+		LL_DBGMCU_EnableDBGSleepMode();
+	#endif
+
 	const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	uint32_t dtr = 0;
+
+
 
 	if (usb_enable(NULL)) {
 		return;
@@ -38,11 +52,15 @@ void main(void)
 
 	while (1) {
 		if (ret < 0) {
-            printk("DWT Probe failed");
+            printk("DWT Probe failed\r\n");
         }
         else{
-            printk("DWT Probe Succeed");
+            printk("DWT Probe Succeed\r\n");
         }
+		k_sleep(K_SECONDS(1));
+	}
+	while (1) {
+        printk("Hello world!");
 		k_sleep(K_SECONDS(1));
 	}
 }
