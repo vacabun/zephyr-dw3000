@@ -4,6 +4,9 @@
         "deca_interface.h": "c",
         "log.h": "c",
         "dw3000_hw.h": "c",
-        "dw3000_spi.h": "c"
+        "dw3000_spi.h": "c",
+        "device.h": "c",
+        "gpio.h": "c",
+        "kernel.h": "c"
     }
 }
