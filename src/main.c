@@ -13,7 +13,7 @@
 #include "stm32f4xx_ll_system.h"
 #endif
 
-# include "dw3000.h"
+#include "dw3000.h"
 
 #include "examples/examples_info/examples_defines.h"
 
@@ -43,10 +43,10 @@ void main(void)
 		k_sleep(K_MSEC(100));
 	}
 
-
-
 	build_examples();
+
 	extern example_ptr example_pointer;
+
 	if (example_pointer != NULL)
 	{
 		example_pointer();
