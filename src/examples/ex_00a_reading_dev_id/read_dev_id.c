@@ -15,51 +15,40 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/logging/log.h>
 #include "dw3000.h"
 
-#if defined(TEST_READING_DEV_ID)
+LOG_MODULE_REGISTER(test_read_dev_id, LOG_LEVEL_DBG);
 
-extern void test_run_info(unsigned char *data);
-
-/* Example application name and version to display on LCD screen/VCOM port. */
-#define APP_NAME "READ DEV ID      "
-
-/**
- * Application entry point.
- */
-int read_dev_id(void)
+void read_dev_id(void *p1, void *p2, void *p3)
 {
-    int err;
-    uint32_t dev_id;
 
-	dw3000_hw_init();
-	dw3000_hw_reset();
-	dw3000_hw_init_interrupt();
-	dw3000_spi_speed_fast();
+    dw3000_hw_init();
+    dw3000_hw_reset();
+    dw3000_hw_init_interrupt();
+    dw3000_spi_speed_fast();
 
-    k_sleep(K_SECONDS(1)); // Time needed for DW3000 to start up (transition from INIT_RC to IDLE_RC, or could wait for SPIRDY event)
+    k_sleep(K_SECONDS(1));
 
-    dwt_probe((struct dwt_probe_s*)&dw3000_probe_interf);
+    uint16_t err = dwt_probe((struct dwt_probe_s *)&dw3000_probe_interf);
 
-    /* Reads and validate device ID returns DWT_ERROR if it does not match expected else DWT_SUCCESS */
-    if ((err = dwt_check_dev_id()) == DWT_SUCCESS)
+    while (1)
     {
-        while (1){
-            dev_id = dwt_readdevid();
-            printk((unsigned char *)"CHECK DEV ID OK : %x \r\n", dev_id);
+        if (err != DWT_ERROR)
+        {
+            uint32_t dev_id = dwt_readdevid();
+            LOG_DBG("CHECK DEV ID OK : %x", dev_id);
+            k_sleep(K_SECONDS(1));
+        }
+        else
+        {
+            LOG_DBG("DEV ID FAILED");
+            k_sleep(K_SECONDS(1));
         }
     }
-    else
-    {
-        while (1)
-            printk((unsigned char *)"DEV ID FAILED");
-    }
-    return err;
 }
 
-#endif
 /*****************************************************************************************************************************************************
  * NOTES:
  ****************************************************************************************************************************************************/
-
-
