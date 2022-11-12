@@ -2,9 +2,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-# add_definitions(-DTEST_READING_DEV_ID)
-add_definitions(-DTEST_SS_AES_TWR_INITIATOR)
-add_definitions(-DCONFIG_FPU)
+
 
 # use base board stm32f401_mini
 set(BOARD stm32f401_mini)
@@ -36,3 +34,7 @@ target_include_directories(app PRIVATE src/MAC_802_15_4)
 
 target_include_directories(app PRIVATE src/examples/shared_data)
 
+# target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
+target_compile_definitions(app PRIVATE TEST_SS_AES_TWR_INITIATOR)
+target_compile_definitions(app PRIVATE CONFIG_FPU)
+target_compile_definitions(app PRIVATE CMAKE_EXPORT_COMPILE_COMMANDS=1)

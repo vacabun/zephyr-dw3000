@@ -33,19 +33,18 @@ void read_dev_id(void *p1, void *p2, void *p3)
 
     uint16_t err = dwt_probe((struct dwt_probe_s *)&dw3000_probe_interf);
 
-    while (1)
+    if (err != DWT_ERROR)
     {
-        if (err != DWT_ERROR)
-        {
-            uint32_t dev_id = dwt_readdevid();
-            LOG_DBG("CHECK DEV ID OK : %x", dev_id);
-            k_sleep(K_SECONDS(1));
-        }
-        else
-        {
-            LOG_DBG("DEV ID FAILED");
-            k_sleep(K_SECONDS(1));
-        }
+        uint32_t dev_id = dwt_readdevid();
+        LOG_DBG("CHECK DEV ID OK : %x", dev_id);
+        while (1)
+            ;
+    }
+    else
+    {
+        LOG_DBG("CHECK DEV ID FAILED");
+        while (1)
+            ;
     }
 }
 

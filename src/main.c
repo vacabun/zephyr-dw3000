@@ -21,7 +21,7 @@ BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart),
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
-#define DEFAULT_STACKSIZE 4096
+#define DEFAULT_STACKSIZE 2048
 
 #ifdef TEST_READING_DEV_ID
 void read_dev_id(void *p1, void *p2, void *p3);
@@ -64,8 +64,6 @@ void main(void)
 	k_thread_create(&ss_aes_twr_initiator_thread, ss_aes_twr_initiator_stack, DEFAULT_STACKSIZE, ss_aes_twr_initiator,
 					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 #endif
-	// void ss_aes_twr_initiator(void *p1, void *p2, void *p3);
-	// ss_aes_twr_initiator(NULL, NULL, NULL);
 
 	// while (1) {
 	//     printk("Hello world!");

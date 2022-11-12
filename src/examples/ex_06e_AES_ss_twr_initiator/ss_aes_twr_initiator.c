@@ -181,7 +181,8 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
     if (err == DWT_ERROR)
     {
         LOG_DBG("DEV Probe FAILED");
-        while (1);
+        while (1)
+            ;
     }
     else
     {
@@ -222,9 +223,11 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
     if (dwt_configure(&config))
     {
         LOG_DBG("DEV CONFIG FAILED");
-        while (1);
+        while (1)
+            ;
     }
-    else{
+    else
+    {
         LOG_DBG("DEV CONFIG SUCCEED");
     }
 
