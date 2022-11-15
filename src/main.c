@@ -23,17 +23,24 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #define DEFAULT_STACKSIZE 2048
 
-#ifdef TEST_READING_DEV_ID
+#if defined(TEST_READING_DEV_ID)
 void read_dev_id(void *p1, void *p2, void *p3);
 static K_THREAD_STACK_DEFINE(read_dev_id_stack, DEFAULT_STACKSIZE);
 static struct k_thread read_dev_id_thread;
 #endif
 
-#ifdef TEST_SS_AES_TWR_INITIATOR
+#if defined(TEST_AES_SS_TWR_INITIATOR)
 void ss_aes_twr_initiator(void *p1, void *p2, void *p3);
 static K_THREAD_STACK_DEFINE(ss_aes_twr_initiator_stack, DEFAULT_STACKSIZE);
 static struct k_thread ss_aes_twr_initiator_thread;
 #endif
+
+#if defined(TEST_AES_SS_TWR_RESPONDER)
+void ss_aes_twr_responder(void *p1, void *p2, void *p3);
+static K_THREAD_STACK_DEFINE(ss_aes_twr_responder_stack, DEFAULT_STACKSIZE);
+static struct k_thread ss_aes_twr_responder_thread;
+#endif
+
 
 void main(void)
 {
@@ -42,26 +49,32 @@ void main(void)
 	LL_DBGMCU_EnableDBGSleepMode();
 #endif
 
-	/* usb config */
-	const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
-	uint32_t dtr = 0;
 	if (usb_enable(NULL))
 		return;
+
+	// /* usb config */
+	// const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+	// uint32_t dtr = 0;
 	// Poll if the DTR flag was set
-	while (!dtr)
-	{
-		uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
-		// Give CPU resources to low priority threads.
-		k_sleep(K_MSEC(100));
-	}
+	// while (!dtr)
+	// {
+	// 	uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
+	// 	// Give CPU resources to low priority threads.
+	// 	k_sleep(K_MSEC(100));
+	// }
 
 #ifdef TEST_READING_DEV_ID
 	k_thread_create(&read_dev_id_thread, read_dev_id_stack, DEFAULT_STACKSIZE, read_dev_id,
 					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 #endif
 
-#ifdef TEST_SS_AES_TWR_INITIATOR
+#if defined(TEST_AES_SS_TWR_INITIATOR)
 	k_thread_create(&ss_aes_twr_initiator_thread, ss_aes_twr_initiator_stack, DEFAULT_STACKSIZE, ss_aes_twr_initiator,
+					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
+#endif
+
+#if defined(TEST_AES_SS_TWR_RESPONDER)
+	k_thread_create(&ss_aes_twr_responder_thread, ss_aes_twr_responder_stack, DEFAULT_STACKSIZE, ss_aes_twr_responder,
 					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 #endif
 

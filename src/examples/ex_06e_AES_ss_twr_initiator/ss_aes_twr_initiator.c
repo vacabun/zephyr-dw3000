@@ -28,12 +28,12 @@
 
 #include "dw3000.h"
 
-#include <examples/shared_data/config_options.h>
-#include <examples/shared_data/shared_defines.h>
-#include <examples/shared_data/shared_functions.h>
+#include <shared_data/config_options.h>
+#include <shared_data/shared_defines.h>
+#include <shared_data/shared_functions.h>
 #include <MAC_802_15_4/mac_802_15_4.h>
 
-// #if defined(TEST_AES_SS_TWR_INITIATOR)
+#if defined(TEST_AES_SS_TWR_INITIATOR)
 
 LOG_MODULE_REGISTER(test_ss_aes_twr_initiator, LOG_LEVEL_DBG);
 
@@ -100,12 +100,12 @@ static dwt_config_t config = {
 };
 
 /* Optional keys according to the key index - In AUX security header*/
-static dwt_aes_key_t keys_options[NUM_OF_KEY_OPTIONS] = {{0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
+static const dwt_aes_key_t keys_options[NUM_OF_KEY_OPTIONS] = {{0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
                                                          {0x11223344, 0x55667788, 0x99AABBCC, 0xDDEEFF00, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
                                                          {0xFFEEDDCC, 0xBBAA9988, 0x77665544, 0x33221100, 0x00000000, 0x00000000, 0x00000000, 0x00000000}};
 
 /* Inter-ranging delay period, in milliseconds. */
-#define RNG_DELAY_MS 1000
+#define RNG_DELAY_MS 2000
 
 /* Default antenna delay values for 64 MHz PRF. See NOTE 2 below. */
 #define TX_ANT_DLY 16385
@@ -137,7 +137,7 @@ static uint8_t rx_buffer[RX_BUF_LEN];
 /* Delay between frames, in UWB microseconds. See NOTE 1 below. */
 #define POLL_TX_TO_RESP_RX_DLY_UUS (1320 + CPU_PROCESSING_TIME)
 /* Receive response timeout. See NOTE 5 below. */
-#define RESP_RX_TIMEOUT_UUS 250
+#define RESP_RX_TIMEOUT_UUS 4000
 
 /* Hold copies of computed time of flight and distance here for reference so that it can be examined at a debug breakpoint. */
 static double tof;
@@ -171,58 +171,52 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
     dw3000_hw_reset();
     // dw3000_hw_init_interrupt();
     dw3000_spi_speed_fast();
-    LOG_DBG("DEV HW SUCCEED");
+    // LOG_DBG("DEV HW SUCCEED");
+    // k_sleep(K_SECONDS(1));
 
-    k_sleep(K_SECONDS(1));
-
-    LOG_DBG("DEV Probe START");
+    // LOG_DBG("DEV Probe START");
     /* Probe for the correct device driver. */
     uint16_t err = dwt_probe((struct dwt_probe_s *)&dw3000_probe_interf);
     if (err == DWT_ERROR)
     {
         LOG_DBG("DEV Probe FAILED");
+        k_sleep(K_MSEC(1000));
         while (1)
             ;
     }
-    else
-    {
-        LOG_DBG("DEV Probe SUCCEED");
-        uint32_t dev_id = dwt_readdevid();
-        LOG_DBG("CHECK DEV ID : %x", dev_id);
-    }
-    // while (!dwt_checkidlerc()){
+    // else
+    // {
+    //     LOG_DBG("DEV Probe SUCCEED");
+    //     uint32_t dev_id = dwt_readdevid();
+    //     LOG_DBG("CHECK DEV ID : %x", dev_id);
+    // }
 
-    // } /* Need to make sure DW IC is in IDLE_RC before proceeding */
-    while (1)
-    {
-        if (!dwt_checkidlerc())
-        {
-            LOG_DBG("WAITTING DW IC is in IDLE_RC START");
-        }
-        else
-        {
-            LOG_DBG("DW IC is in IDLE_RC ");
-            break;
-        }
-    }
-    LOG_DBG("DEV INIT START");
+    // k_sleep(K_MSEC(100));
+    /* Need to make sure DW IC is in IDLE_RC before proceeding */
+    while (!dwt_checkidlerc())
+        ;
+    // k_sleep(K_MSEC(100));
+    // LOG_DBG("DEV INIT START");
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
     {
         LOG_DBG("DEV INIT FAILED");
+        k_sleep(K_SECONDS(1));
         while (1)
             ;
     }
-    LOG_DBG("DEV INIT SUCCEED");
+    // LOG_DBG("DEV INIT SUCCEED");
     /* Enabling LEDs here for debug so that for each TX the D1 LED will flash on DW3000 red eval-shield boards.
      * Note, in real low power applications the LEDs should not be used. */
     // dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK);
 
     /* Configure DW IC. See NOTE 14 below. */
     /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
-    LOG_DBG("DEV CONFIG START");
+    // k_sleep(K_MSEC(100));
+    // LOG_DBG("DEV CONFIG START");
     if (dwt_configure(&config))
     {
         LOG_DBG("DEV CONFIG FAILED");
+        k_sleep(K_SECONDS(1));
         while (1)
             ;
     }
@@ -230,6 +224,7 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
     {
         LOG_DBG("DEV CONFIG SUCCEED");
     }
+    k_sleep(K_SECONDS(1));
 
     /* Configure the TX spectrum parameters (power, PG delay and PG count) */
     dwt_configuretxrf(&txconfig_options);
@@ -318,7 +313,8 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
         mac_frame_update_aux_frame_cnt(&mac_frame, ++frame_cnt);
 
         if (status_reg & DWT_INT_RXFCG_BIT_MASK)
-        { /* Got response */
+        { /*  */
+
             uint16_t frame_len;
 
             /* Clear good RX frame event in the DW IC status register. */
@@ -333,6 +329,7 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
              * If any of these checks fail the rx_aes_802_15_4 will return an error
              * */
             aes_config.mode = AES_Decrypt;
+            aes_config.key_load = AES_KEY_Load;
             PAYLOAD_PTR_802_15_4(&mac_frame) = rx_buffer; /* Set the MAC pyload ptr */
 
             /* This example assumes that initiator and responder are sending encrypted data */
@@ -342,20 +339,21 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
                 switch (status)
                 {
                 case AES_RES_ERROR_LENGTH:
-                    // test_run_info((unsigned char *)"Length AES error");
+                    LOG_DBG("Length AES error");
                     break;
                 case AES_RES_ERROR:
-                    // test_run_info((unsigned char *)"ERROR AES");
+                    LOG_DBG("ERROR AES");
                     break;
                 case AES_RES_ERROR_FRAME:
-                    // test_run_info((unsigned char *)"Error Frame");
+                    LOG_DBG("Error Frame");
                     break;
                 case AES_RES_ERROR_IGNORE_FRAME:
                     continue; // Got frame not for us
                 }
-                while (1)
-                {
-                };
+                // while (1)
+                // {
+                //     k_sleep(K_MSEC(1000));
+                // };
             }
 
             /* Check that the frame is the expected response from the companion "SS TWR AES responder" example.
@@ -383,19 +381,29 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
 
                 tof = ((rtd_init - rtd_resp * (1 - clockOffsetRatio)) / 2.0) * DWT_TIME_UNITS;
                 distance = tof * SPEED_OF_LIGHT;
+                LOG_DBG("distance: %f", distance);
+                // k_sleep(K_MSEC(20));
             }
+        }
+        else if (status_reg & SYS_STATUS_ALL_RX_TO)
+        {
+            dwt_writesysstatuslo(SYS_STATUS_ALL_RX_TO);
+            printk("Got response TIMEOUT\r\n");
+            k_sleep(K_MSEC(50));
         }
         else
         {
             /* Clear RX error/timeout events in the DW IC status register. */
             dwt_writesysstatuslo(SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR);
+            printk("Got response ERROR\r\n");
+            k_sleep(K_MSEC(50));
         }
 
         /* Execute a delay between ranging exchanges. */
         k_sleep(K_MSEC(RNG_DELAY_MS));
     }
 }
-// #endif
+#endif
 /*****************************************************************************************************************************************************
  * NOTES:
  *

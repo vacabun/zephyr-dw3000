@@ -18,8 +18,9 @@ extern "C"
 {
 #endif
 
-#include <deca_device_api.h>
-#include <shared_defines.h>
+#include <string.h>
+#include "dw3000.h"
+#include <shared_data/shared_defines.h>
 
 #define NUM_OF_KEY_OPTIONS 3
 

@@ -18,9 +18,7 @@ extern "C"
 {
 #endif
 
-#ifdef STM32F429xx
-#include <main.h>
-#endif // STM32F429xx
+
 
 #define SPEED_OF_LIGHT   (299702547)
 #define FRAME_LEN_MAX    (127)
@@ -33,7 +31,7 @@ extern "C"
 #define FINAL_MSG_TS_LEN 4
 
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
- * 1 uus = 512 / 499.2 µs and 1 µs = 499.2 * 128 dtu. */
+ * 1 uus = 512 / 499.2 ï¿½s and 1 ï¿½s = 499.2 * 128 dtu. */
 #define UUS_TO_DWT_TIME 63898
 
 #define TX_CHANGEABLE_DATA  (10) /*Can change the length of TX data by this size*/

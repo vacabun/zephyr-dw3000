@@ -27,14 +27,20 @@ target_sources(app PRIVATE ${app_sources})
 FILE(GLOB ex_sources src/examples/*/*.c)
 target_sources(app PRIVATE ${ex_sources})
 
+FILE(GLOB share_sources src/shared_data/*.c)
+target_sources(app PRIVATE ${share_sources})
+
 target_sources(app PRIVATE src/MAC_802_15_4/mac_802_15_4.c)
 
 target_include_directories(app PRIVATE src)
 target_include_directories(app PRIVATE src/MAC_802_15_4)
-
-target_include_directories(app PRIVATE src/examples/shared_data)
+target_include_directories(app PRIVATE src/shared_data)
 
 # target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
-target_compile_definitions(app PRIVATE TEST_SS_AES_TWR_INITIATOR)
+target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR) # stlink
+# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)   # daplink
+
+
 target_compile_definitions(app PRIVATE CONFIG_FPU)
 target_compile_definitions(app PRIVATE CMAKE_EXPORT_COMPILE_COMMANDS=1)
+

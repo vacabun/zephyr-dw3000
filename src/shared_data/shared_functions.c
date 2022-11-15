@@ -11,9 +11,9 @@
  */
 
 #include "dw3000.h"
-#include <examples/shared_data/config_options.h>
-#include <examples/shared_data/shared_defines.h>
-#include <examples/shared_data/shared_functions.h>
+#include <shared_data/config_options.h>
+#include <shared_data/shared_defines.h>
+#include <shared_data/shared_functions.h>
 #include <stdlib.h>
 
 extern dwt_config_t config_options;

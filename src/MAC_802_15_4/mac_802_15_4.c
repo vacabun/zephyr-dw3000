@@ -9,8 +9,8 @@
  * All rights reserved.
  *
  */
-#include <deca_device_api.h>
-#include <mac_802_15_4.h>
+#include <dw3000.h>
+#include <MAC_802_15_4/mac_802_15_4.h>
 #include <string.h>
 
 dwt_mic_size_e dwt_mic_size_from_bytes(uint8_t mic_size_in_bytes);
@@ -44,14 +44,8 @@ void mac_frame_init_mac_frame_ctrl(mac_frame_802_15_4_format_t *mac_frame_ptr)
      * Frame control[0]= Data, protected, no more data, no ACK, PEND ID for dest (no for source)
      * Frame control[1]=Has seq num, no IE, dest addr extended, frame ver 2 (IEEE Std 802.15.4), source extended
      */
-    MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, 0)
-        = (MAC_FRAME_TYPE_802_15_4_DATA << MAC_FRAME_TYPE_SHIFT_VALUE) | (MAC_SEC_EN_PROTECTED << MAC_FRAME_SECURITY_ENABLED_SHIFT_VALUE)
-          | (MAC_PEND_FRAME_NO_MORE_DATA << MAC_FRAME_FRAME_PENDING_SHIFT_VALUE) | (MAC_AR_NO_ACK << MAC_FRAME_AR_SHIFT_VALUE)
-          | (MAC_PEND_ID_COMPRESS_DEST_EXIST_SOURCE_NOT << MAC_FRAME_PAN_ID_SHIFT_VALUE);
-    MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, 1)
-        = (MAC_SEQ_NUM_SUPP_PRESENT << MAC_FRAME_SEQ_NUM_SUPPRESS_SHIFT_VALUE) | (MAC_SEQ_NUM_SUPP_PRESENT << MAC_FRAME_IE_PRESET_SHIFT_VALUE)
-          | (MAC_DEST_ADDR_MODE_EXT_ADDR_64_BITS << MAC_FRAME_DEST_ADDR_MODE_SHIFT_VALUE) | (DATA_FRAME_VERSION << MAC_FRAME_FRAME_VER_SHIFT_VALUE)
-          | (MAC_SRC_ADDR_MODE_EXT_ADDR_64_BITS << MAC_FRAME_SRC_ADDR_MODE_SHIFT_VALUE);
+    MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, 0) = (MAC_FRAME_TYPE_802_15_4_DATA << MAC_FRAME_TYPE_SHIFT_VALUE) | (MAC_SEC_EN_PROTECTED << MAC_FRAME_SECURITY_ENABLED_SHIFT_VALUE) | (MAC_PEND_FRAME_NO_MORE_DATA << MAC_FRAME_FRAME_PENDING_SHIFT_VALUE) | (MAC_AR_NO_ACK << MAC_FRAME_AR_SHIFT_VALUE) | (MAC_PEND_ID_COMPRESS_DEST_EXIST_SOURCE_NOT << MAC_FRAME_PAN_ID_SHIFT_VALUE);
+    MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, 1) = (MAC_SEQ_NUM_SUPP_PRESENT << MAC_FRAME_SEQ_NUM_SUPPRESS_SHIFT_VALUE) | (MAC_SEQ_NUM_SUPP_PRESENT << MAC_FRAME_IE_PRESET_SHIFT_VALUE) | (MAC_DEST_ADDR_MODE_EXT_ADDR_64_BITS << MAC_FRAME_DEST_ADDR_MODE_SHIFT_VALUE) | (DATA_FRAME_VERSION << MAC_FRAME_FRAME_VER_SHIFT_VALUE) | (MAC_SRC_ADDR_MODE_EXT_ADDR_64_BITS << MAC_FRAME_SRC_ADDR_MODE_SHIFT_VALUE);
 }
 
 /* This function updates the MAC frame sequence number */
@@ -64,9 +58,7 @@ void mac_frame_update_sequence_number(mac_frame_802_15_4_format_t *mac_frame_ptr
 /* Security control -  Security level MIC 16(data conf OFF, data Auth Yes), key determine from key index, has frame cnt, frame cnt gen nonce */
 void mac_frame_set_AUX_security_control(mac_frame_802_15_4_format_t *mac_frame_ptr)
 {
-    MAC_FRAME_AUX_SECURITY_CTRL_802_15_4(mac_frame_ptr)
-        = (AUX_SEC_LEVEL_DATA_CONF_ON_MIC_16 << AUX_SECURITY_LEVEL_SHIFT_VALUE) | (AUX_KEY_IDEN_MODE_KEY_INDEX << AUX_KEY_IDENTIFIER_MODE_SHIFT_VALUE)
-          | (AUX_FRAME_CNT_SUPPRESS_OFF << AUX_FRAME_CNT_SUPPRESSION_SHIFT_VALUE) | (AUX_ASN_IN_NOUNCE_FRAME_CNT_GEN_NONCE << AUX_ASN_IN_NONCE);
+    MAC_FRAME_AUX_SECURITY_CTRL_802_15_4(mac_frame_ptr) = (AUX_SEC_LEVEL_DATA_CONF_ON_MIC_16 << AUX_SECURITY_LEVEL_SHIFT_VALUE) | (AUX_KEY_IDEN_MODE_KEY_INDEX << AUX_KEY_IDENTIFIER_MODE_SHIFT_VALUE) | (AUX_FRAME_CNT_SUPPRESS_OFF << AUX_FRAME_CNT_SUPPRESSION_SHIFT_VALUE) | (AUX_ASN_IN_NOUNCE_FRAME_CNT_GEN_NONCE << AUX_ASN_IN_NONCE);
 }
 
 /* Set the key identifier value, in our case it is one byte - key index */
@@ -167,7 +159,7 @@ uint8_t mac_frame_get_aux_mic_size(mac_frame_802_15_4_format_t *mac_frame_ptr)
  * @return aes_results_e
  * */
 aes_results_e rx_aes_802_15_4(mac_frame_802_15_4_format_t *mac_frame_ptr, uint16_t frame_length, dwt_aes_job_t *aes_job, uint16_t max_payload,
-    dwt_aes_key_t *aes_key_ptr, uint64_t exp_src_addr, uint64_t exp_dst_addr, dwt_aes_config_t *aes_config)
+                              dwt_aes_key_t *aes_key_ptr, uint64_t exp_src_addr, uint64_t exp_dst_addr, dwt_aes_config_t *aes_config)
 {
     uint8_t nonce[13];
     int8_t status;
@@ -198,8 +190,7 @@ aes_results_e rx_aes_802_15_4(mac_frame_802_15_4_format_t *mac_frame_ptr, uint16
             return AES_RES_ERROR_FRAME;
         }
 
-        payload_len
-            = frame_length - (aes_job->header_len + aes_job->mic_size + FCS_LEN); /* to get unencrypted payload length subtract MIC, FCS and MHR lengths */
+        payload_len = frame_length - (aes_job->header_len + aes_job->mic_size + FCS_LEN); /* to get unencrypted payload length subtract MIC, FCS and MHR lengths */
         /* Check if payload_len is valid */
         if ((payload_len < 0) || (payload_len > max_payload))
         {

@@ -10,7 +10,7 @@
  *
  */
 
-#include <deca_device_api.h>
+#include <dw3000.h>
 
 #ifndef EXAMPLES_CONFIG_OPTIONS_H_
 #define EXAMPLES_CONFIG_OPTIONS_H_
