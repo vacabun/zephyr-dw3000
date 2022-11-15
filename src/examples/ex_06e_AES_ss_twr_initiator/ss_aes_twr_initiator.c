@@ -169,7 +169,7 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
 
     dw3000_hw_init();
     dw3000_hw_reset();
-    // dw3000_hw_init_interrupt();
+    dw3000_hw_init_interrupt();
     dw3000_spi_speed_fast();
     // LOG_DBG("DEV HW SUCCEED");
     // k_sleep(K_SECONDS(1));
@@ -382,6 +382,7 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
                 tof = ((rtd_init - rtd_resp * (1 - clockOffsetRatio)) / 2.0) * DWT_TIME_UNITS;
                 distance = tof * SPEED_OF_LIGHT;
                 LOG_DBG("distance: %f", distance);
+                //printk("distance: %f\r\n", distance);
                 // k_sleep(K_MSEC(20));
             }
         }
@@ -389,14 +390,14 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
         {
             dwt_writesysstatuslo(SYS_STATUS_ALL_RX_TO);
             printk("Got response TIMEOUT\r\n");
-            k_sleep(K_MSEC(50));
+            // k_sleep(K_MSEC(50));
         }
         else
         {
             /* Clear RX error/timeout events in the DW IC status register. */
             dwt_writesysstatuslo(SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR);
             printk("Got response ERROR\r\n");
-            k_sleep(K_MSEC(50));
+            // k_sleep(K_MSEC(50));
         }
 
         /* Execute a delay between ranging exchanges. */

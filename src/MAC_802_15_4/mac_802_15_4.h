@@ -102,10 +102,10 @@ extern "C"
         AUX_ASN_IN_NOUNCE_FRAME_CNT_NOT_GEN_NONCE
     } aux_asn_in_nonce_e;
 
-#define AUX_SECURITY_LEVEL_SHIFT_VALUE        0
-#define AUX_KEY_IDENTIFIER_MODE_SHIFT_VALUE   3
+#define AUX_SECURITY_LEVEL_SHIFT_VALUE 0
+#define AUX_KEY_IDENTIFIER_MODE_SHIFT_VALUE 3
 #define AUX_FRAME_CNT_SUPPRESSION_SHIFT_VALUE 5
-#define AUX_ASN_IN_NONCE                      6
+#define AUX_ASN_IN_NONCE 6
 
 #define AUX_FRAME_CNT_SIZE 4
 
@@ -186,18 +186,18 @@ extern "C"
     } mac_src_addr_mode_802_15_4_e;
 
 /* Shift values to frame control byte 0 */
-#define MAC_FRAME_TYPE_SHIFT_VALUE             0
+#define MAC_FRAME_TYPE_SHIFT_VALUE 0
 #define MAC_FRAME_SECURITY_ENABLED_SHIFT_VALUE 3
-#define MAC_FRAME_FRAME_PENDING_SHIFT_VALUE    4
-#define MAC_FRAME_AR_SHIFT_VALUE               5
-#define MAC_FRAME_PAN_ID_SHIFT_VALUE           6
+#define MAC_FRAME_FRAME_PENDING_SHIFT_VALUE 4
+#define MAC_FRAME_AR_SHIFT_VALUE 5
+#define MAC_FRAME_PAN_ID_SHIFT_VALUE 6
 
 /* Shift values to frame control byte 1 */
 #define MAC_FRAME_SEQ_NUM_SUPPRESS_SHIFT_VALUE 0
-#define MAC_FRAME_IE_PRESET_SHIFT_VALUE        1
-#define MAC_FRAME_DEST_ADDR_MODE_SHIFT_VALUE   2
-#define MAC_FRAME_FRAME_VER_SHIFT_VALUE        4
-#define MAC_FRAME_SRC_ADDR_MODE_SHIFT_VALUE    6
+#define MAC_FRAME_IE_PRESET_SHIFT_VALUE 1
+#define MAC_FRAME_DEST_ADDR_MODE_SHIFT_VALUE 2
+#define MAC_FRAME_FRAME_VER_SHIFT_VALUE 4
+#define MAC_FRAME_SRC_ADDR_MODE_SHIFT_VALUE 6
 
 #define SECURITY_ENABLE_BIT_MASK 0x8
 
@@ -219,22 +219,22 @@ extern "C"
     } security_state_e;
 
 #define MAC_FRAME_HEADER_SIZE(mac_frame_ptr) sizeof((mac_frame_ptr)->mhr_802_15_4)
-#define MHR_802_15_4_PTR(mac_frame_ptr)      &((mac_frame_ptr)->mhr_802_15_4)
-#define PAYLOAD_PTR_802_15_4(mac_frame_ptr)  (mac_frame_ptr)->payload_ptr
+#define MHR_802_15_4_PTR(mac_frame_ptr) &((mac_frame_ptr)->mhr_802_15_4)
+#define PAYLOAD_PTR_802_15_4(mac_frame_ptr) (mac_frame_ptr)->payload_ptr
 
-#define MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, index)   (mac_frame_ptr)->mhr_802_15_4.frame_ctrl[index]
-#define MAC_FRAME_SEQ_NUM_802_15_4(mac_frame_ptr)             (mac_frame_ptr)->mhr_802_15_4.sequence_num
-#define MAC_FRAME_DEST_PAN_ID_802_15_4(mac_frame_ptr, index)  (mac_frame_ptr)->mhr_802_15_4.dest_pan_id[index]
+#define MAC_FRAME_FRAME_CTRL_802_15_4(mac_frame_ptr, index) (mac_frame_ptr)->mhr_802_15_4.frame_ctrl[index]
+#define MAC_FRAME_SEQ_NUM_802_15_4(mac_frame_ptr) (mac_frame_ptr)->mhr_802_15_4.sequence_num
+#define MAC_FRAME_DEST_PAN_ID_802_15_4(mac_frame_ptr, index) (mac_frame_ptr)->mhr_802_15_4.dest_pan_id[index]
 #define MAC_FRAME_DEST_ADDR_ID_802_15_4(mac_frame_ptr, index) (mac_frame_ptr)->mhr_802_15_4.dest_addr[index]
 //#define MAC_FRAME_SRC_PAN_ID_802_15_4(index)  MAC_frame_802_15_4_format.MHR_802_15_4.src_pan_id[index]
 #define MAC_FRAME_SRC_ADDR_802_15_4(mac_frame_ptr, index) (mac_frame_ptr)->mhr_802_15_4.src_addr[index]
-#define MAC_FRAME_SRC_ADDR_PTR_802_15_4(mac_frame_ptr)    (mac_frame_ptr)->mhr_802_15_4.src_addr
+#define MAC_FRAME_SRC_ADDR_PTR_802_15_4(mac_frame_ptr) (mac_frame_ptr)->mhr_802_15_4.src_addr
 
-#define MAC_FRAME_AUX_SECURITY_CTRL_802_15_4(mac_frame_ptr)     (mac_frame_ptr)->mhr_802_15_4.aux_security.security_ctrl
-#define MAC_FRAME_AUX_FRAME_CNT_802_15_4(mac_frame_ptr, index)  (mac_frame_ptr)->mhr_802_15_4.aux_security.frame_counter[index]
-#define MAC_FRAME_AUX_FRAME_CNT_PTR_802_15_4(mac_frame_ptr)     (mac_frame_ptr)->mhr_802_15_4.aux_security.frame_counter
+#define MAC_FRAME_AUX_SECURITY_CTRL_802_15_4(mac_frame_ptr) (mac_frame_ptr)->mhr_802_15_4.aux_security.security_ctrl
+#define MAC_FRAME_AUX_FRAME_CNT_802_15_4(mac_frame_ptr, index) (mac_frame_ptr)->mhr_802_15_4.aux_security.frame_counter[index]
+#define MAC_FRAME_AUX_FRAME_CNT_PTR_802_15_4(mac_frame_ptr) (mac_frame_ptr)->mhr_802_15_4.aux_security.frame_counter
 #define MAC_FRAME_AUX_FRAME_GET_CNT_802_15_4_PTR(mac_frame_ptr) (uint8_t *)(&(mac_frame_ptr)->mhr_802_15_4.aux_security.frame_counter)
-#define MAC_FRAME_AUX_KEY_IDENTIFY_802_15_4(mac_frame_ptr)      (mac_frame_ptr)->mhr_802_15_4.aux_security.key_indentifier
+#define MAC_FRAME_AUX_KEY_IDENTIFY_802_15_4(mac_frame_ptr) (mac_frame_ptr)->mhr_802_15_4.aux_security.key_indentifier
 
     void mac_frame_init_mac_frame_ctrl(mac_frame_802_15_4_format_t *mac_frame_ptr);
     void mac_frame_set_pan_ids_and_addresses_802_15_4(
@@ -248,7 +248,7 @@ extern "C"
     void mac_frame_set_aux_security_control(mac_frame_802_15_4_format_t *mac_frame_ptr);
     uint8_t mac_frame_get_aux_mic_size(mac_frame_802_15_4_format_t *mac_frame_ptr);
     aes_results_e rx_aes_802_15_4(mac_frame_802_15_4_format_t *mac_frame_ptr, uint16_t frame_length, dwt_aes_job_t *aes_job, uint16_t max_payload,
-        dwt_aes_key_t *aes_key_ptr, uint64_t exp_src_addr, uint64_t exp_dst_addr, dwt_aes_config_t *aes_config);
+                                  const dwt_aes_key_t *aes_key_ptr, uint64_t exp_src_addr, uint64_t exp_dst_addr, dwt_aes_config_t *aes_config);
     security_state_e get_security_state(mac_frame_802_15_4_format_t *mac_frame_ptr);
     void get_src_and_dst_frame_addr(mac_frame_802_15_4_format_t *mac_frame_ptr, uint64_t *src, uint64_t *dst);
 
