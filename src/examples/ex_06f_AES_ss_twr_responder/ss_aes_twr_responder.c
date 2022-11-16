@@ -105,8 +105,8 @@ static dwt_config_t config = {
 
 /* Optional keys according to the key index - In AUX security header*/
 static const dwt_aes_key_t keys_options[NUM_OF_KEY_OPTIONS] = {{0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
-                                                         {0x11223344, 0x55667788, 0x99AABBCC, 0xDDEEFF00, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
-                                                         {0xFFEEDDCC, 0xBBAA9988, 0x77665544, 0x33221100, 0x00000000, 0x00000000, 0x00000000, 0x00000000}};
+                                                               {0x11223344, 0x55667788, 0x99AABBCC, 0xDDEEFF00, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
+                                                               {0xFFEEDDCC, 0xBBAA9988, 0x77665544, 0x33221100, 0x00000000, 0x00000000, 0x00000000, 0x00000000}};
 
 /* MAC payload data of the frames used in the ranging process. See NOTE 3 below. */
 /* Poll message from the initiator to the responder */
@@ -315,7 +315,7 @@ void ss_aes_twr_responder(void *p1, void *p2, void *p3)
 
                     /* Retrieve poll reception timestamp. */
                     poll_rx_ts = get_rx_timestamp_u64();
-        
+
                     /* Compute response message transmission time. See NOTE 7 below. */
                     resp_tx_time = (poll_rx_ts + (POLL_RX_TO_RESP_TX_DLY_UUS * UUS_TO_DWT_TIME)) >> 8;
                     dwt_setdelayedtrxtime(resp_tx_time);
@@ -335,7 +335,8 @@ void ss_aes_twr_responder(void *p1, void *p2, void *p3)
                     MAC_FRAME_AUX_KEY_IDENTIFY_802_15_4(&mac_frame) = RESPONDER_KEY_INDEX;
 
                     /* Increment the sequence number */
-                    MAC_FRAME_SEQ_NUM_802_15_4(&mac_frame)++;
+                    MAC_FRAME_SEQ_NUM_802_15_4(&mac_frame)
+                    ++;
 
                     /* Update the frame count */
                     mac_frame_update_aux_frame_cnt(&mac_frame, mac_frame_get_aux_frame_cnt(&mac_frame) + 1);

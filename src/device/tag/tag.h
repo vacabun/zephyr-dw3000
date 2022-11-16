@@ -1,6 +1,8 @@
 #ifndef _TAG_H_
 #define _TAG_H_
 
+#if defined(DEVICE_TAG)
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/usb/usb_device.h>
@@ -15,8 +17,6 @@
 #include <shared_data/shared_functions.h>
 #include <MAC_802_15_4/mac_802_15_4.h>
 
-#if defined(DEVICE_TAG)
-
 void tag_initiator(void *p1, void *p2, void *p3);
 
 void tag_tx_done_cb(const dwt_cb_data_t *cb_data);
@@ -27,12 +27,6 @@ void tag_spi_err_cb(const dwt_cb_data_t *cb_data);
 void tag_spi_ready_cb(const dwt_cb_data_t *cb_data);
 void tag_dual_spi_cb(const dwt_cb_data_t *cb_data);
 
-
-
-
-
-
 #endif
 
 #endif
-

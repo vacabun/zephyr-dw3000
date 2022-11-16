@@ -42,8 +42,8 @@ target_include_directories(app PRIVATE src/shared_data)
 # target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR) # stlink
 # target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)   # daplink
 
-target_compile_definitions(app PRIVATE DEVICE_TAG) # stlink
-# target_compile_definitions(app PRIVATE DEVICE_ANCHOR) # daplink
+# target_compile_definitions(app PRIVATE DEVICE_TAG) # stlink
+target_compile_definitions(app PRIVATE DEVICE_ANCHOR) # daplink
 
 target_compile_definitions(app PRIVATE CONFIG_FPU)
 target_compile_definitions(app PRIVATE CMAKE_EXPORT_COMPILE_COMMANDS=1)

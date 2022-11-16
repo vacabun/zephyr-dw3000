@@ -20,10 +20,10 @@ BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart),
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
-#define DEFAULT_STACKSIZE 2048
+#define DEFAULT_STACKSIZE 4096
 
 #if defined(TEST_READING_DEV_ID) || defined(TEST_AES_SS_TWR_INITIATOR) || defined(TEST_AES_SS_TWR_RESPONDER)
-#define TEST_STACKSIZE 2048
+#define TEST_STACKSIZE 4096
 #define _TEST_
 #include <examples/example.h>
 void (*test_fun)(void *, void *, void *);
@@ -35,7 +35,13 @@ static struct k_thread test_thread;
 #include <device/tag/tag.h>
 static K_THREAD_STACK_DEFINE(tag_initiator_stack, DEFAULT_STACKSIZE);
 static struct k_thread tag_initiator_thread;
-#endif //DEVICE_TAG
+#endif // DEVICE_TAG
+
+#if defined(DEVICE_ANCHOR)
+#include <device/anthor/anthor.h>
+static K_THREAD_STACK_DEFINE(anthor_responder_stack, DEFAULT_STACKSIZE);
+static struct k_thread anthor_responder_thread;
+#endif // DEVICE_ANCHOR
 
 void main(void)
 {
@@ -68,6 +74,11 @@ void main(void)
 
 #if defined(DEVICE_TAG)
 	k_thread_create(&tag_initiator_thread, tag_initiator_stack, DEFAULT_STACKSIZE, tag_initiator,
+					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
+#endif
+
+#if defined(DEVICE_ANCHOR)
+	k_thread_create(&anthor_responder_thread, anthor_responder_stack, DEFAULT_STACKSIZE, anthor_responder,
 					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 #endif
 }

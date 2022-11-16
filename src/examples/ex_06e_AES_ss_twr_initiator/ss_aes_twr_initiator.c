@@ -101,8 +101,8 @@ static dwt_config_t config = {
 
 /* Optional keys according to the key index - In AUX security header*/
 static const dwt_aes_key_t keys_options[NUM_OF_KEY_OPTIONS] = {{0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
-                                                         {0x11223344, 0x55667788, 0x99AABBCC, 0xDDEEFF00, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
-                                                         {0xFFEEDDCC, 0xBBAA9988, 0x77665544, 0x33221100, 0x00000000, 0x00000000, 0x00000000, 0x00000000}};
+                                                               {0x11223344, 0x55667788, 0x99AABBCC, 0xDDEEFF00, 0x00000000, 0x00000000, 0x00000000, 0x00000000},
+                                                               {0xFFEEDDCC, 0xBBAA9988, 0x77665544, 0x33221100, 0x00000000, 0x00000000, 0x00000000, 0x00000000}};
 
 /* Inter-ranging delay period, in milliseconds. */
 #define RNG_DELAY_MS 2000
@@ -382,8 +382,8 @@ void ss_aes_twr_initiator(void *p1, void *p2, void *p3)
                 tof = ((rtd_init - rtd_resp * (1 - clockOffsetRatio)) / 2.0) * DWT_TIME_UNITS;
                 distance = tof * SPEED_OF_LIGHT;
                 LOG_DBG("distance: %f", distance);
-                //printk("distance: %f\r\n", distance);
-                // k_sleep(K_MSEC(20));
+                // printk("distance: %f\r\n", distance);
+                //  k_sleep(K_MSEC(20));
             }
         }
         else if (status_reg & SYS_STATUS_ALL_RX_TO)

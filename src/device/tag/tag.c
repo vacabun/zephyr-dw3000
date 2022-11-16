@@ -90,7 +90,7 @@ static uint8_t rx_resp_msg[] = {0, 0, 0, 0, 0, 0, 0, 0, 'R', 'e', 's', 'p', 'o',
  * temperature. These values can be calibrated prior to taking reference measurements. See NOTE 2 below. */
 extern dwt_txconfig_t txconfig_options;
 
-dwt_aes_job_t aes_job_tx,aes_job_rx;
+dwt_aes_job_t aes_job_tx, aes_job_rx;
 
 /* Hold copies of computed time of flight and distance here for reference so that it can be examined at a debug breakpoint. */
 static double tof;
@@ -135,11 +135,11 @@ void tag_init_dw3000()
 
     dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
 
-    dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
+    // dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
 
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
 
-    dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK | DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
+    dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK|DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
 
     dwt_setcallbacks(&tag_tx_done_cb, &tag_rx_ok_cb, &tag_rx_timeout_cb, &tag_rx_err_cb, &tag_spi_err_cb, &tag_spi_ready_cb, &tag_dual_spi_cb);
     dw3000_hw_interrupt_enable();
@@ -148,19 +148,19 @@ void tag_init_dw3000()
 }
 void tag_tx_done_cb(const dwt_cb_data_t *cb_data)
 {
-    dwt_writesysstatuslo(DWT_INT_TXFRS_BIT_MASK);
+    // dwt_writesysstatuslo(DWT_INT_TXFRS_BIT_MASK);
     LOG_DBG("TX done");
-    dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK, 0, DWT_ENABLE_INT);
+    // dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK, 0, DWT_ENABLE_INT);
 }
 void tag_rx_ok_cb(const dwt_cb_data_t *cb_data)
 {
     /* Clear good RX frame event in the DW IC status register. */
-    dwt_writesysstatuslo(DWT_INT_RXFCG_BIT_MASK);
+    // dwt_writesysstatuslo(DWT_INT_RXFCG_BIT_MASK);
 
     LOG_DBG("RX OK");
 
     /* Read data length that was received */
-    uint16_t frame_len = cb_data->datalength;//in interrupts must use cb_data->datalength
+    uint16_t frame_len = cb_data->datalength; // in interrupts must use cb_data->datalength
 
     aes_config.mode = AES_Decrypt;
     aes_config.key_load = AES_KEY_Load;
@@ -215,9 +215,8 @@ void tag_rx_ok_cb(const dwt_cb_data_t *cb_data)
         case AES_RES_ERROR_IGNORE_FRAME:
             break; // Got frame not for us
         }
-
     }
-    dwt_setinterrupt(DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
+    // dwt_setinterrupt(DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
 }
 void tag_rx_timeout_cb(const dwt_cb_data_t *cb_data)
 {
@@ -239,15 +238,13 @@ void tag_initiator(void *p1, void *p2, void *p3)
 {
     static uint32_t frame_cnt = 0; /* See Note 13 */
     static uint8_t seq_cnt = 0x0A; /* Frame sequence number, incremented after each transmission. */
-    uint8_t nonce[13]; /* 13-byte nonce used in this example as per IEEE802.15.4 */
+    uint8_t nonce[13];             /* 13-byte nonce used in this example as per IEEE802.15.4 */
     dwt_aes_job_t aes_job_tx;
-    int8_t status;
 
     LOG_DBG(APP_NAME);
 
     tag_init_dw3000();
 
- 
     /*Configure the TX and RX AES jobs, the TX job is used to encrypt the Poll message,
      * the RX job is used to decrypt the Response message */
     aes_job_tx.mode = AES_Encrypt;                               /* this is encryption job */
@@ -264,7 +261,7 @@ void tag_initiator(void *p1, void *p2, void *p3)
     aes_job_rx.dst_port = AES_Dst_Rx_buf_0; /* Decrypt the encrypted data to the IC RX buffer : this will destroy original RX frame */
     aes_job_rx.header_len = MAC_FRAME_HEADER_SIZE(&mac_frame);
     aes_job_rx.header = (uint8_t *)MHR_802_15_4_PTR(&mac_frame); /* plain-text header which will not be encrypted */
-    aes_job_rx.payload = rx_buffer;        /* pointer to where the decrypted data will be copied to when read from the IC*/
+    aes_job_rx.payload = rx_buffer;                              /* pointer to where the decrypted data will be copied to when read from the IC*/
 
     while (1)
     {
@@ -284,33 +281,33 @@ void tag_initiator(void *p1, void *p2, void *p3)
         aes_config.mic = dwt_mic_size_from_bytes(aes_job_tx.mic_size);
         dwt_configure_aes(&aes_config);
 
-        /* The AES job will take the TX frame data and and copy it to DW IC TX buffer before transmission. See NOTE 7 below. */
+        /* The AES job will take the TX frame data and and copy it to DW IC TX buffer before transmission. */
+        int8_t status;
         status = dwt_do_aes(&aes_job_tx, aes_config.aes_core_type);
         /* Check for errors */
         if (status < 0)
         {
-            // test_run_info((unsigned char *)"AES length error");
-            while (1)
-            {
-            }; /* Error */
+            LOG_DBG("AES length error"); /* Error */
         }
         else if (status & DWT_AES_ERRORS)
         {
-            // test_run_info((unsigned char *)"ERROR AES");
-            while (1)
-            {
-            }; /* Error */
+            LOG_DBG("ERROR AES"); /* Error */
         }
+        else
+        {
+            /* configure the frame control and start transmission */
+            dwt_writetxfctrl(aes_job_tx.header_len + aes_job_tx.payload_len + aes_job_tx.mic_size + FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
+            /* Start transmission, indicating that a response is expected so that reception is enabled automatically after the frame is sent and the delay
+             * set by dwt_setrxaftertxdelay() has elapsed. */
 
-        /* configure the frame control and start transmission */
-        dwt_writetxfctrl(aes_job_tx.header_len + aes_job_tx.payload_len + aes_job_tx.mic_size + FCS_LEN, 0, 1); /* Zero offset in TX buffer, ranging. */
-        /* Start transmission, indicating that a response is expected so that reception is enabled automatically after the frame is sent and the delay
-         * set by dwt_setrxaftertxdelay() has elapsed. */
+            LOG_DBG("start TX");
+            dwt_forcetrxoff();
+            dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 
-        LOG_DBG("start TX");
-        dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
+            // dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK | DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
 
-        k_sleep(K_SECONDS(10));
+            k_sleep(K_SECONDS(10));
+        }
 
         MAC_FRAME_SEQ_NUM_802_15_4(&mac_frame) = ++seq_cnt;
         mac_frame_update_aux_frame_cnt(&mac_frame, ++frame_cnt);
