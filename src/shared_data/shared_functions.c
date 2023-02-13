@@ -487,7 +487,31 @@ uint64_t get_rx_timestamp_u64(void)
     }
     return ts;
 }
+/*! ------------------------------------------------------------------------------------------------------------------
+ * @fn get_sys_timestamp_u64()
+ *
+ * @brief Get the sys time-stamp high 32-bit value in a 64-bit variable.
+ *        /!\ This function assumes that length of time-stamps is 40 bits!
+ *
+ * @param  none
+ *
+ * @return  64-bit value of the read time-stamp.
+ */
+uint64_t get_sys_timestamp_u64(void)
+{
+    uint8_t ts_tab[4];
+    uint64_t ts = 0;
+    int8_t i;
+    dwt_readsystime(ts_tab);
 
+    for (i = 3; i >= 0; i--)
+    {
+        ts <<= 8;
+        ts |= ts_tab[i];
+    }
+    ts <<= 8;
+    return ts;
+}
 /*! ------------------------------------------------------------------------------------------------------------------
  * @fn final_msg_get_ts()
  *
@@ -608,7 +632,9 @@ void waitforsysstatus(uint32_t *lo_result, uint32_t *hi_result, uint32_t lo_mask
     // if only a mask value for the system status register (higher 32-bits) is set
     else if (hi_mask)
     {
-        while (!((hi_result_tmp = dwt_readsysstatushi()) & (hi_mask))) { };
+        while (!((hi_result_tmp = dwt_readsysstatushi()) & (hi_mask)))
+        {
+        };
     }
 
     if (lo_result != NULL)

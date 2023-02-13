@@ -17,6 +17,8 @@
 #include <shared_data/shared_functions.h>
 #include <MAC_802_15_4/mac_802_15_4.h>
 
+void tag_init_dw3000();
+
 void tag_initiator(void *p1, void *p2, void *p3);
 
 void tag_tx_done_cb(const dwt_cb_data_t *cb_data);

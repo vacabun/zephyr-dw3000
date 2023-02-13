@@ -27,7 +27,7 @@ extern "C"
 #define RXFLEN_MASK    0x0000007FUL /* Receive Frame Length (0 to 127) */
 #define RXFL_MASK_1023 0x000003FFUL /* Receive Frame Length Extension (0 to 1023) */
 
-#define RESP_MSG_TS_LEN  4
+#define RESP_MSG_TS_LEN  5
 #define FINAL_MSG_TS_LEN 4
 
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.

@@ -34,7 +34,7 @@ dwt_mic_size_e dwt_mic_size_from_bytes(uint8_t mic_size_in_bytes);
 /* Indexes to access some of the fields in the frames defined above. */
 #define ALL_MSG_SN_IDX 2          // sequence number byte index in MHR
 #define RESP_MSG_POLL_RX_TS_IDX 0 // index in the MAC payload for Poll RX time
-#define RESP_MSG_RESP_TX_TS_IDX 4 // index in the MAC payload for Response TX time
+#define RESP_MSG_RESP_TX_TS_IDX 5 // index in the MAC payload for Response TX time
 #define RESP_MSG_TS_LEN 4
 
 /* Buffer to store received response message.
@@ -133,11 +133,10 @@ void tag_init_dw3000()
     dwt_setrxantennadelay(RX_ANT_DLY); // set RX antenna delay time
     dwt_settxantennadelay(TX_ANT_DLY); // set TX antenna delay time
 
-    dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
+    dwt_setrxaftertxdelay(0);
+    dwt_setrxtimeout(0);
 
-    // dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
-
-    dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
+    // dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
 
     dwt_setinterrupt(DWT_INT_TXFRS_BIT_MASK|DWT_INT_RXFCG_BIT_MASK, 0, DWT_ENABLE_INT);
 
@@ -172,8 +171,8 @@ void tag_rx_ok_cb(const dwt_cb_data_t *cb_data)
     {
         /* Check that the frame is the expected response from the companion "SS TWR AES responder" example.
          * ignore the 8 first bytes of the response message as they contain the poll and response timestamps */
-        if (memcmp(&rx_buffer[START_RECEIVE_DATA_LOCATION], &rx_resp_msg[START_RECEIVE_DATA_LOCATION], aes_job_rx.payload_len - START_RECEIVE_DATA_LOCATION) == 0)
-        {
+        // if (memcmp(&rx_buffer[START_RECEIVE_DATA_LOCATION], &rx_resp_msg[START_RECEIVE_DATA_LOCATION], aes_job_rx.payload_len - START_RECEIVE_DATA_LOCATION) == 0)
+        // {
             uint32_t poll_tx_ts, resp_rx_ts, poll_rx_ts, resp_tx_ts;
             int32_t rtd_init, rtd_resp;
             float clockOffsetRatio;
@@ -196,7 +195,7 @@ void tag_rx_ok_cb(const dwt_cb_data_t *cb_data)
             tof = ((rtd_init - rtd_resp * (1 - clockOffsetRatio)) / 2.0) * DWT_TIME_UNITS;
             distance = tof * SPEED_OF_LIGHT;
             LOG_DBG("distance: %f", distance);
-        }
+        // }
     }
     else
     {
@@ -243,7 +242,6 @@ void tag_initiator(void *p1, void *p2, void *p3)
 
     LOG_DBG(APP_NAME);
 
-    tag_init_dw3000();
 
     /*Configure the TX and RX AES jobs, the TX job is used to encrypt the Poll message,
      * the RX job is used to decrypt the Response message */

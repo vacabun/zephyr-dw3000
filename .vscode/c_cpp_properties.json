@@ -22,7 +22,7 @@
             "compilerPath": "${myZephyrSDKPath}/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc",
             "cStandard": "c11",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "gcc-arm",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }
     ],

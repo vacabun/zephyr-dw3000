@@ -178,7 +178,7 @@ aes_results_e rx_aes_802_15_4(mac_frame_802_15_4_format_t *mac_frame_ptr, uint16
         get_src_and_dst_frame_addr(mac_frame_ptr, &src_addr, &dst_addr);
         security_state = get_security_state(mac_frame_ptr);
         // Check if we got a secure frame with the right destination and source addresses
-        if ((security_state != SECURITY_STATE_SECURE) || (exp_src_addr != src_addr) || (exp_dst_addr != dst_addr))
+        if ((security_state != SECURITY_STATE_SECURE) /*|| (exp_src_addr != src_addr) */|| (exp_dst_addr != dst_addr))
         {
             return AES_RES_ERROR_IGNORE_FRAME; // This is not for us
         }

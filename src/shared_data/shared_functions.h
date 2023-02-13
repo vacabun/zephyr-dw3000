@@ -7,14 +7,14 @@ extern "C"
 #endif
 
 /* Power boost calculation service function defines*/
-#define LUT_1000_200_US_NUM     33 /* Number of frames duration values for which look up table has corresponding dial back in units of 0.1dB*/
-#define LUT_1000_200_US_STEP    25 /* Frame duration step in us between each index in LUT */
-#define LUT_1000_200_US_MIN     200 /* Minimum frame duration characterised by LUT*/
+#define LUT_1000_200_US_NUM 33    /* Number of frames duration values for which look up table has corresponding dial back in units of 0.1dB*/
+#define LUT_1000_200_US_STEP 25   /* Frame duration step in us between each index in LUT */
+#define LUT_1000_200_US_MIN 200   /* Minimum frame duration characterised by LUT*/
 #define LUT_1000_200_US_MIN_BST 0 /* Boost to apply when a frame is longer or equal to the maximum duration*/
 
-#define LUT_200_70_US_NUM     14 /* Number of frames duration values for which look up table has corresponding dial back in units of 0.1dB*/
-#define LUT_200_70_US_STEP    10 /* Frame duration step in us between each index in LUT */
-#define LUT_200_70_US_MIN     70 /* Minimum frame duration characterised by LUT*/
+#define LUT_200_70_US_NUM 14      /* Number of frames duration values for which look up table has corresponding dial back in units of 0.1dB*/
+#define LUT_200_70_US_STEP 10     /* Frame duration step in us between each index in LUT */
+#define LUT_200_70_US_MIN 70      /* Minimum frame duration characterised by LUT*/
 #define LUT_200_70_US_MAX_BST 113 /* Total boost to apply when a frame is equal or shorter to the minimum duration*/
 
 #define FRAME_DURATION_REF 1000 /* The reference duration for a frame is 1000us. Longer frame will have 0dB boost.*/
@@ -128,7 +128,17 @@ extern "C"
      * @return  64-bit value of the read time-stamp.
      */
     uint64_t get_rx_timestamp_u64(void);
-
+    /*! ------------------------------------------------------------------------------------------------------------------
+     * @fn get_sys_timestamp_u64()
+     *
+     * @brief Get the sys time-stamp high 32-bit value in a 64-bit variable.
+     *        /!\ This function assumes that length of time-stamps is 40 bits!
+     *
+     * @param  none
+     *
+     * @return  64-bit value of the read time-stamp.
+     */
+    uint64_t get_sys_timestamp_u64(void);
     /*! ------------------------------------------------------------------------------------------------------------------
      * @fn final_msg_get_ts()
      *
@@ -140,6 +150,7 @@ extern "C"
      *
      * @return none
      */
+
     void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts);
 
     /*! ------------------------------------------------------------------------------------------------------------------
