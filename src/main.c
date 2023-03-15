@@ -30,31 +30,6 @@ static K_THREAD_STACK_DEFINE(test_stack, TEST_STACKSIZE);
 static struct k_thread test_thread;
 #endif // TEST_READING_DEV_ID TEST_AES_SS_TWR_INITIATOR TEST_AES_SS_TWR_RESPONDER
 
-#if defined(DEVICE_TAG)
-#include <device/tag/tag.h>
-static K_THREAD_STACK_DEFINE(tag_initiator_stack, DEFAULT_STACKSIZE);
-static struct k_thread tag_initiator_thread;
-#endif // DEVICE_TAG
-
-#if defined(DEVICE_ANCHOR)
-#include <device/anthor/anthor.h>
-#include <device/device_common.h>
-
-// tx Workqueue Thread
-K_HEAP_DEFINE(tx_msg_heap,1024);
-
-#define ANTHOR_TX_WORK_QUEUE_STACK_SIZE 512
-#define ANTHOR_TX_WORK_QUEUE_PRIORITY 5
-
-K_THREAD_STACK_DEFINE(anthor_tx_work_q_stack_area, ANTHOR_TX_WORK_QUEUE_STACK_SIZE);
-struct k_work_q anthor_tx_work_q;
-
-// main thread
-static K_THREAD_STACK_DEFINE(anthor_responder_stack, DEFAULT_STACKSIZE);
-static struct k_thread anthor_responder_thread;
-
-#endif // DEVICE_ANCHOR
-
 void main(void)
 {
 	// swd debug
@@ -83,21 +58,4 @@ void main(void)
 	k_thread_create(&test_thread, test_stack, TEST_STACKSIZE, test_fun,
 					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
 #endif //_TEST_
-
-#if defined(DEVICE_TAG)
-	tag_init_dw3000();
-	k_thread_create(&tag_initiator_thread, tag_initiator_stack, DEFAULT_STACKSIZE, tag_initiator,
-					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
-#endif
-
-#if defined(DEVICE_ANCHOR)
-	anthor_init_dw3000();
-
-	// tx Workqueue Thread
-	k_work_queue_init(&anthor_tx_work_q);
-	k_work_queue_start(&anthor_tx_work_q, anthor_tx_work_q_stack_area, K_THREAD_STACK_SIZEOF(anthor_tx_work_q_stack_area), ANTHOR_TX_WORK_QUEUE_PRIORITY, NULL);
-	
-	k_thread_create(&anthor_responder_thread, anthor_responder_stack, DEFAULT_STACKSIZE, anthor_responder,
-					NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
-#endif
 }

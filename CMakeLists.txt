@@ -23,9 +23,6 @@ project(zephyr-dw3000)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
-FILE(GLOB ex_sources src/device/*/*.c)
-target_sources(app PRIVATE ${ex_sources})
-
 FILE(GLOB ex_sources src/examples/*/*.c)
 target_sources(app PRIVATE ${ex_sources})
 
@@ -38,12 +35,9 @@ target_include_directories(app PRIVATE src)
 target_include_directories(app PRIVATE src/MAC_802_15_4)
 target_include_directories(app PRIVATE src/shared_data)
 
-# target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
-# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR) # stlink
-# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)   # daplink
-
-# target_compile_definitions(app PRIVATE DEVICE_TAG) # stlink
-target_compile_definitions(app PRIVATE DEVICE_ANCHOR) # daplink
+target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
+# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR)
+# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)
 
 target_compile_definitions(app PRIVATE CONFIG_FPU)
 target_compile_definitions(app PRIVATE CMAKE_EXPORT_COMPILE_COMMANDS=1)
