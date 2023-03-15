@@ -2,6 +2,8 @@
 
 ## Board
 
+Use MCU STM32F401C.
+
 https://github.com/vacabun/uwb-demoBoard
 
 ## Example
