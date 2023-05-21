@@ -41,15 +41,18 @@ jobs:
     - name: Build example TEST_READING_DEV_ID
       run: |
         cd app
+        make clean
         make TEST_READING_DEV_ID
         cd ..
     - name: Build example TEST_AES_SS_TWR_INITIATOR
       run: |
         cd app
+        make clean
         make TEST_AES_SS_TWR_INITIATOR
         cd ..
     - name: Build example TEST_AES_SS_TWR_RESPONDER
       run: |
         cd app
+        make clean
         make TEST_AES_SS_TWR_RESPONDER
         cd ..
