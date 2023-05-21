@@ -35,9 +35,20 @@ target_include_directories(app PRIVATE src)
 target_include_directories(app PRIVATE src/MAC_802_15_4)
 target_include_directories(app PRIVATE src/shared_data)
 
-target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
-# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR)
-# target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)
+if(TEST_READING_DEV_ID_DEF)
+  message("Build example for TEST_READING_DEV_ID.")
+  target_compile_definitions(app PRIVATE TEST_READING_DEV_ID)
+endif()
+
+if(TEST_AES_SS_TWR_INITIATOR_DEF)
+  message("Build example for TEST_AES_SS_TWR_INITIATOR.")
+  target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_INITIATOR)
+endif()
+
+if(TEST_AES_SS_TWR_RESPONDER_DEF)
+  message("Build example for TEST_AES_SS_TWR_RESPONDER.")
+  target_compile_definitions(app PRIVATE TEST_AES_SS_TWR_RESPONDER)
+endif()
 
 target_compile_definitions(app PRIVATE CONFIG_FPU)
 target_compile_definitions(app PRIVATE CMAKE_EXPORT_COMPILE_COMMANDS=1)
